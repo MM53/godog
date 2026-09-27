@@ -47,7 +47,7 @@ func InitializeScenario(ctx *ScenarioContext) {
 	ctx.Step(`^I run feature suite$`, tc.iRunFeatureSuite)
 	ctx.Step(`^I run feature suite with tags "([^"]*)"$`, tc.iRunFeatureSuiteWithTags)
 	ctx.Step(`^I run feature suite with formatter "([^"]*)"$`, tc.iRunFeatureSuiteWithFormatter)
-	ctx.Step(`^(?:I )(allow|disable) variable injection`, tc.iSetVariableInjectionTo)
+	ctx.Step(`^(?:I )(allow|disable) variable injection$`, tc.iSetVariableInjectionTo)
 	ctx.Step(`^(?:a )?feature "([^"]*)"(?: file)?:$`, tc.aFeatureFile)
 	ctx.Step(`^the suite should have (passed|failed)$`, tc.theSuiteShouldHave)
 
@@ -57,9 +57,9 @@ func InitializeScenario(ctx *ScenarioContext) {
 	ctx.Step(`^there was event triggered before scenario "([^"]*)"$`, tc.thereWasEventTriggeredBeforeScenario)
 	ctx.Step(`^these events had to be fired for a number of times:$`, tc.theseEventsHadToBeFiredForNumberOfTimes)
 
-	ctx.Step(`^(?:a )?failing step`, tc.aFailingStep)
-	ctx.Step(`^this step should fail`, tc.aFailingStep)
-	ctx.Step(`^the following steps? should be (passed|failed|skipped|undefined|pending):`, tc.followingStepsShouldHave)
+	ctx.Step(`^(?:a )?failing step$`, tc.aFailingStep)
+	ctx.Step(`^this step should fail$`, tc.aFailingStep)
+	ctx.Step(`^the following steps? should be (passed|failed|skipped|undefined|pending):$`, tc.followingStepsShouldHave)
 	ctx.Step(`^the undefined step snippets should be:$`, tc.theUndefinedStepSnippetsShouldBe)
 
 	// event stream
@@ -119,7 +119,7 @@ func InitializeScenario(ctx *ScenarioContext) {
 		return Steps{"passing step", "passing multistep", "failing multistep"}
 	})
 	// Default recovery step
-	ctx.Step(`Ignore.*`, func() error {
+	ctx.Step(`^Ignore.*$`, func() error {
 		return nil
 	})
 
@@ -1232,7 +1232,7 @@ func TestTestSuite_Run(t *testing.T) {
 						return Steps{"step passes", "step passes"}
 					})
 
-					s.Step("pending", func() error {
+					s.Step("^step is pending$", func() error {
 						return ErrPending
 					})
 

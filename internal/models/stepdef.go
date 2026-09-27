@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"strconv"
+	"slices"
 
 	messages "github.com/cucumber/messages/go/v34"
 
@@ -13,6 +13,9 @@ import (
 )
 
 var typeOfBytes = reflect.TypeOf([]byte(nil))
+var typeOfInt = reflect.TypeOf(int64(0))
+var typeOfUint = reflect.TypeOf(uint64(0))
+var typeOfFloat = reflect.TypeOf(float64(0))
 
 // matchable errors
 var (
@@ -63,131 +66,83 @@ func (sd *StepDefinition) Run(ctx context.Context) (context.Context, interface{}
 		param := typ.In(i + ctxOffset)
 		switch param.Kind() {
 		case reflect.Int:
-			s, err := sd.shouldBeString(i)
+			value, err := sd.shouldBeInt(i, param)
 			if err != nil {
 				return ctx, err
 			}
-			v, err := strconv.ParseInt(s, 10, 0)
-			if err != nil {
-				return ctx, fmt.Errorf(`%w %d: "%s" to int: %s`, ErrCannotConvert, i, s, err)
-			}
-			values = append(values, reflect.ValueOf(int(v)))
+			values = append(values, value)
 		case reflect.Int64:
-			s, err := sd.shouldBeString(i)
+			value, err := sd.shouldBeInt(i, param)
 			if err != nil {
 				return ctx, err
 			}
-			v, err := strconv.ParseInt(s, 10, 64)
-			if err != nil {
-				return ctx, fmt.Errorf(`%w %d: "%s" to int64: %s`, ErrCannotConvert, i, s, err)
-			}
-			values = append(values, reflect.ValueOf(v))
+			values = append(values, value)
 		case reflect.Int32:
-			s, err := sd.shouldBeString(i)
+			value, err := sd.shouldBeInt(i, param)
 			if err != nil {
 				return ctx, err
 			}
-			v, err := strconv.ParseInt(s, 10, 32)
-			if err != nil {
-				return ctx, fmt.Errorf(`%w %d: "%s" to int32: %s`, ErrCannotConvert, i, s, err)
-			}
-			values = append(values, reflect.ValueOf(int32(v)))
+			values = append(values, value)
 		case reflect.Int16:
-			s, err := sd.shouldBeString(i)
+			value, err := sd.shouldBeInt(i, param)
 			if err != nil {
 				return ctx, err
 			}
-			v, err := strconv.ParseInt(s, 10, 16)
-			if err != nil {
-				return ctx, fmt.Errorf(`%w %d: "%s" to int16: %s`, ErrCannotConvert, i, s, err)
-			}
-			values = append(values, reflect.ValueOf(int16(v)))
+			values = append(values, value)
 		case reflect.Int8:
-			s, err := sd.shouldBeString(i)
+			value, err := sd.shouldBeInt(i, param)
 			if err != nil {
 				return ctx, err
 			}
-			v, err := strconv.ParseInt(s, 10, 8)
-			if err != nil {
-				return ctx, fmt.Errorf(`%w %d: "%s" to int8: %s`, ErrCannotConvert, i, s, err)
-			}
-			values = append(values, reflect.ValueOf(int8(v)))
+			values = append(values, value)
 		case reflect.Uint:
-			s, err := sd.shouldBeString(i)
+			value, err := sd.shouldBeUint(i, param)
 			if err != nil {
 				return ctx, err
 			}
-			v, err := strconv.ParseUint(s, 10, 0)
-			if err != nil {
-				return ctx, fmt.Errorf(`%w %d: "%s" to uint: %s`, ErrCannotConvert, i, s, err)
-			}
-			values = append(values, reflect.ValueOf(uint(v)))
+			values = append(values, value)
 		case reflect.Uint64:
-			s, err := sd.shouldBeString(i)
+			value, err := sd.shouldBeUint(i, param)
 			if err != nil {
 				return ctx, err
 			}
-			v, err := strconv.ParseUint(s, 10, 64)
-			if err != nil {
-				return ctx, fmt.Errorf(`%w %d: "%s" to uint64: %s`, ErrCannotConvert, i, s, err)
-			}
-			values = append(values, reflect.ValueOf(v))
+			values = append(values, value)
 		case reflect.Uint32:
-			s, err := sd.shouldBeString(i)
+			value, err := sd.shouldBeUint(i, param)
 			if err != nil {
 				return ctx, err
 			}
-			v, err := strconv.ParseUint(s, 10, 32)
-			if err != nil {
-				return ctx, fmt.Errorf(`%w %d: "%s" to uint32: %s`, ErrCannotConvert, i, s, err)
-			}
-			values = append(values, reflect.ValueOf(uint32(v)))
+			values = append(values, value)
 		case reflect.Uint16:
-			s, err := sd.shouldBeString(i)
+			value, err := sd.shouldBeUint(i, param)
 			if err != nil {
 				return ctx, err
 			}
-			v, err := strconv.ParseUint(s, 10, 16)
-			if err != nil {
-				return ctx, fmt.Errorf(`%w %d: "%s" to uint16: %s`, ErrCannotConvert, i, s, err)
-			}
-			values = append(values, reflect.ValueOf(uint16(v)))
+			values = append(values, value)
 		case reflect.Uint8:
-			s, err := sd.shouldBeString(i)
+			value, err := sd.shouldBeUint(i, param)
 			if err != nil {
 				return ctx, err
 			}
-			v, err := strconv.ParseUint(s, 10, 8)
-			if err != nil {
-				return ctx, fmt.Errorf(`%w %d: "%s" to uint8: %s`, ErrCannotConvert, i, s, err)
-			}
-			values = append(values, reflect.ValueOf(uint8(v)))
+			values = append(values, value)
 		case reflect.String:
 			s, err := sd.shouldBeString(i)
 			if err != nil {
 				return ctx, err
 			}
-			values = append(values, reflect.ValueOf(s))
+			values = append(values, reflect.ValueOf(s).Convert(param))
 		case reflect.Float64:
-			s, err := sd.shouldBeString(i)
+			value, err := sd.shouldBeFloat(i, param)
 			if err != nil {
 				return ctx, err
 			}
-			v, err := strconv.ParseFloat(s, 64)
-			if err != nil {
-				return ctx, fmt.Errorf(`%w %d: "%s" to float64: %s`, ErrCannotConvert, i, s, err)
-			}
-			values = append(values, reflect.ValueOf(v))
+			values = append(values, value)
 		case reflect.Float32:
-			s, err := sd.shouldBeString(i)
+			value, err := sd.shouldBeFloat(i, param)
 			if err != nil {
 				return ctx, err
 			}
-			v, err := strconv.ParseFloat(s, 32)
-			if err != nil {
-				return ctx, fmt.Errorf(`%w %d: "%s" to float32: %s`, ErrCannotConvert, i, s, err)
-			}
-			values = append(values, reflect.ValueOf(float32(v)))
+			values = append(values, value)
 		case reflect.Ptr:
 			arg := sd.Args[i]
 			switch param.Elem().String() {
@@ -226,7 +181,7 @@ func (sd *StepDefinition) Run(ctx context.Context) (context.Context, interface{}
 				if err != nil {
 					return ctx, err
 				}
-				values = append(values, reflect.ValueOf([]byte(s)))
+				values = append(values, reflect.ValueOf([]byte(s)).Convert(param))
 			default:
 				// the problem is the function decl is not using a support slice type as the param
 				return ctx, fmt.Errorf("%w: the slice parameter %d type []%s is not supported", ErrUnsupportedParameterType, i, param.Elem().Kind())
@@ -273,7 +228,7 @@ func (sd *StepDefinition) Run(ctx context.Context) (context.Context, interface{}
 		errMsg = fmt.Sprintf(", step def also returned an error: %v", result1)
 	}
 
-	text := sd.StepDefinition.Expr.String()
+	text := sd.StepDefinition.Expr.Source()
 
 	if result0 == nil {
 		panic(fmt.Sprintf("step definition '%v' with return type (context.Context, error) must not return <nil> for the context.Context value%s", text, errMsg))
@@ -299,6 +254,54 @@ func (sd *StepDefinition) shouldBeString(idx int) (string, error) {
 	}
 }
 
+func (sd *StepDefinition) shouldBeConvertable(idx int, param reflect.Type) (reflect.Value, error) {
+	arg := reflect.ValueOf(sd.Args[idx])
+	if !arg.CanConvert(param) {
+		return reflect.Value{}, fmt.Errorf(`%w %d: "%v" of type %s to %s`, ErrCannotConvert, idx, sd.Args[idx], arg.Type().String(), param.String())
+	}
+
+	return arg, nil
+}
+
+func (sd *StepDefinition) shouldBeInt(idx int, param reflect.Type) (reflect.Value, error) {
+	arg, err := sd.shouldBeConvertable(idx, param)
+	if err != nil {
+		return reflect.Value{}, err
+	}
+
+	if param.OverflowInt(arg.Convert(typeOfInt).Int()) {
+		return reflect.Value{}, fmt.Errorf(`%w %d: "%v" of type %s to %s: value out of range`, ErrCannotConvert, idx, sd.Args[idx], arg.Type().String(), param.String())
+	}
+
+	return arg.Convert(param), nil
+}
+
+func (sd *StepDefinition) shouldBeUint(idx int, param reflect.Type) (reflect.Value, error) {
+	arg, err := sd.shouldBeConvertable(idx, param)
+	if err != nil {
+		return reflect.Value{}, err
+	}
+
+	if param.OverflowUint(arg.Convert(typeOfUint).Uint()) {
+		return reflect.Value{}, fmt.Errorf(`%w %d: "%v" of type %s to %s: value out of range`, ErrCannotConvert, idx, sd.Args[idx], arg.Type().String(), param.String())
+	}
+
+	return arg.Convert(param), nil
+}
+
+func (sd *StepDefinition) shouldBeFloat(idx int, param reflect.Type) (reflect.Value, error) {
+	arg, err := sd.shouldBeConvertable(idx, param)
+	if err != nil {
+		return reflect.Value{}, err
+	}
+
+	if param.OverflowFloat(arg.Convert(typeOfFloat).Float()) {
+		return reflect.Value{}, fmt.Errorf(`%w %d: "%v" of type %s to %s: value out of range`, ErrCannotConvert, idx, sd.Args[idx], arg.Type().String(), param.String())
+	}
+
+	return arg.Convert(param), nil
+}
+
 // GetInternalStepDefinition ...
 func (sd *StepDefinition) GetInternalStepDefinition() *formatters.StepDefinition {
 	if sd == nil {
@@ -306,4 +309,13 @@ func (sd *StepDefinition) GetInternalStepDefinition() *formatters.StepDefinition
 	}
 
 	return &sd.StepDefinition
+}
+
+func (sd *StepDefinition) TypeHints() []reflect.Type {
+	types := slices.Collect(sd.HandlerValue.Type().Ins())
+	if len(types) > 0 && types[0].AssignableTo(typeOfContext) {
+		types = types[1:]
+	}
+
+	return types
 }

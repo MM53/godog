@@ -38,7 +38,7 @@ func TestPrintsStepDefinitions(t *testing.T) {
 
 	steps := []string{
 		"^passing step$",
-		`^with name "([^"])"`,
+		`^with name "([^"])"$`,
 	}
 
 	for _, step := range steps {
@@ -374,7 +374,7 @@ func Test_RandomizeRun_WithStaticSeed(t *testing.T) {
 	const featurePath = "internal/formatters/formatter-tests/features/with_few_empty_scenarios.feature"
 
 	fmtOutputScenarioInitializer := func(ctx *ScenarioContext) {
-		ctx.Step(`^(?:a )?failing step`, failingStepDef)
+		ctx.Step(`^(?:a )?failing step$`, failingStepDef)
 		ctx.Step(`^(?:a )?pending step$`, pendingStepDef)
 		ctx.Step(`^(?:a )?passing step$`, passingStepDef)
 		ctx.Step(`^odd (\d+) and even (\d+) number$`, oddEvenStepDef)
@@ -413,7 +413,7 @@ func Test_RandomizeRun_RerunWithSeed(t *testing.T) {
 	const featurePath = "internal/formatters/formatter-tests/features/with_few_empty_scenarios.feature"
 
 	fmtOutputScenarioInitializer := func(ctx *ScenarioContext) {
-		ctx.Step(`^(?:a )?failing step`, failingStepDef)
+		ctx.Step(`^(?:a )?failing step$`, failingStepDef)
 		ctx.Step(`^(?:a )?pending step$`, pendingStepDef)
 		ctx.Step(`^(?:a )?passing step$`, passingStepDef)
 		ctx.Step(`^odd (\d+) and even (\d+) number$`, oddEvenStepDef)
@@ -448,7 +448,7 @@ func Test_FormatOutputRun(t *testing.T) {
 	const featurePath = "internal/formatters/formatter-tests/features/with_few_empty_scenarios.feature"
 
 	fmtOutputScenarioInitializer := func(ctx *ScenarioContext) {
-		ctx.Step(`^(?:a )?failing step`, failingStepDef)
+		ctx.Step(`^(?:a )?failing step$`, failingStepDef)
 		ctx.Step(`^(?:a )?pending step$`, pendingStepDef)
 		ctx.Step(`^(?:a )?passing step$`, passingStepDef)
 		ctx.Step(`^odd (\d+) and even (\d+) number$`, oddEvenStepDef)
@@ -490,7 +490,7 @@ func Test_FormatOutputRun_Error(t *testing.T) {
 	const featurePath = "internal/formatters/formatter-tests/features/with_few_empty_scenarios.feature"
 
 	fmtOutputScenarioInitializer := func(ctx *ScenarioContext) {
-		ctx.Step(`^(?:a )?failing step`, failingStepDef)
+		ctx.Step(`^(?:a )?failing step$`, failingStepDef)
 		ctx.Step(`^(?:a )?pending step$`, pendingStepDef)
 		ctx.Step(`^(?:a )?passing step$`, passingStepDef)
 		ctx.Step(`^odd (\d+) and even (\d+) number$`, oddEvenStepDef)
@@ -595,7 +595,7 @@ func Test_FormatterConcurrencyRun(t *testing.T) {
 	const noConcurrency = 1
 
 	fmtOutputScenarioInitializer := func(ctx *ScenarioContext) {
-		ctx.Step(`^(?:a )?failing step`, failingStepDef)
+		ctx.Step(`^(?:a )?failing step$`, failingStepDef)
 		ctx.Step(`^(?:a )?pending step$`, pendingStepDef)
 		ctx.Step(`^(?:a )?passing step$`, passingStepDef)
 		ctx.Step(`^odd (\d+) and even (\d+) number$`, oddEvenStepDef)
