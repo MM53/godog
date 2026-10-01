@@ -221,7 +221,9 @@ func runWithOptions(suiteName string, runner runner, opt Options) int {
 	}
 
 	if opt.ShowStepDefinitions {
-		s := suite{}
+		s := suite{
+			defaultTypeRegistry: opt.DefaultTypeRegistry,
+		}
 		sc := ScenarioContext{suite: &s}
 		runner.scenarioInitializer(&sc)
 		printStepDefinitions(s.steps, output)
