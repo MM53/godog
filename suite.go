@@ -547,7 +547,7 @@ func (s *suite) matchStepTextAndType(text string, stepType messages.PickleStepTy
 
 			args := make([]interface{}, 0, len(arguments))
 			for _, argument := range arguments {
-				args = append(args, argument.GetValue())
+				args = append(args, argument)
 			}
 
 			matchingExpressions = append(matchingExpressions, h.Expr.Source())
