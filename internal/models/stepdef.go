@@ -19,7 +19,6 @@ var typeOfBytes = reflect.TypeOf([]byte(nil))
 var (
 	ErrUnmatchedStepArgumentNumber = errors.New("func expected more arguments than given")
 	ErrCannotConvert               = errors.New("cannot convert argument")
-	ErrUnsupportedParameterType    = errors.New("func has unsupported parameter type")
 )
 
 // StepDefinition ...
@@ -196,7 +195,7 @@ func (sd *StepDefinition) Run(ctx context.Context) (context.Context, interface{}
 func (sd *StepDefinition) shouldBeCucumberArgument(idx int) (value interface{}, err error) {
 	arg, ok := sd.Args[idx].(*cucumberexpressions.Argument)
 	if !ok {
-		return nil, fmt.Errorf("")
+		return nil, fmt.Errorf(`%w %d: expected a *cucumberexpressions.Argument, but got "%T"`, ErrCannotConvert, idx, sd.Args[idx])
 	}
 
 	defer func() {
