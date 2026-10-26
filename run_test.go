@@ -516,6 +516,11 @@ func Test_FormatOutputRun_Error(t *testing.T) {
 }
 
 func Test_AllFeaturesRun(t *testing.T) {
+	scenarioInitializers := map[string]scenarioInitializer{
+		"regularExpressions":  InitializeScenario,
+		"cucumberExpressions": InitializeScenarioWithCucumberExpressions,
+	}
+
 	const concurrency = 100
 	const noRandomFlag = 0
 	const format = "progress"
@@ -533,18 +538,26 @@ func Test_AllFeaturesRun(t *testing.T) {
 425 steps (425 passed)
 0s
 `
+	for name, initializer := range scenarioInitializers {
+		t.Run(name, func(t *testing.T) {
+			actualStatus, actualOutput := testRun(t,
+				initializer,
+				format, concurrency,
+				noRandomFlag, []string{"features"},
+			)
 
-	actualStatus, actualOutput := testRun(t,
-		InitializeScenario,
-		format, concurrency,
-		noRandomFlag, []string{"features"},
-	)
-
-	assert.Equal(t, exitSuccess, actualStatus)
-	assert.Equal(t, expected, actualOutput)
+			assert.Equal(t, exitSuccess, actualStatus)
+			assert.Equal(t, expected, actualOutput)
+		})
+	}
 }
 
 func Test_AllFeaturesRunAsSubtests(t *testing.T) {
+	scenarioInitializers := map[string]scenarioInitializer{
+		"regularExpressions":  InitializeScenario,
+		"cucumberExpressions": InitializeScenarioWithCucumberExpressions,
+	}
+
 	const concurrency = 100
 	const noRandomFlag = 0
 	const format = "progress"
@@ -563,20 +576,24 @@ func Test_AllFeaturesRunAsSubtests(t *testing.T) {
 0s
 `
 
-	actualStatus, actualOutput := testRunWithOptions(
-		t,
-		Options{
-			Format:      format,
-			Concurrency: concurrency,
-			Paths:       []string{"features"},
-			Randomize:   noRandomFlag,
-			TestingT:    t,
-		},
-		InitializeScenario,
-	)
+	for name, initializer := range scenarioInitializers {
+		t.Run(name, func(t *testing.T) {
+			actualStatus, actualOutput := testRunWithOptions(
+				t,
+				Options{
+					Format:      format,
+					Concurrency: concurrency,
+					Paths:       []string{"features"},
+					Randomize:   noRandomFlag,
+					TestingT:    t,
+				},
+				initializer,
+			)
 
-	assert.Equal(t, exitSuccess, actualStatus)
-	assert.Equal(t, expected, actualOutput)
+			assert.Equal(t, exitSuccess, actualStatus)
+			assert.Equal(t, expected, actualOutput)
+		})
+	}
 }
 
 func Test_FormatterConcurrencyRun(t *testing.T) {
